@@ -1,0 +1,9 @@
+__pycache__*
+*.pyc
+ckpts*
+lightning_logs*
+visual*
+dummy*
+ours_pca*
+pca_component*
+archive*
