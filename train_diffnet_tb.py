@@ -63,17 +63,20 @@ if __name__ == '__main__':
     parser.add_argument('--stage', type = str, default = 'init', choices = ['init', 'traj'])
     
     
-    PDTraj.add_model_specific_args(parser)
-    
-    args = parser.parse_args()
-    if args.stage == 'init':
+    # PDTraj.add_model_specific_args(parser)
+    known_args, _ = parser.parse_known_args()
+    # args = parser.parse_args()
+    if known_args.stage == 'init':
+        PDInit.add_model_specific_args(parser)
         args = parser.parse_args()
         model = PDInit(args)
+
         model_checkpoint = ModelCheckpoint(monitor='val_trans_loss', save_top_k=5, mode='min')
         args.train_transform = TargetBuilderInit(50, 60)
         args.val_transform = TargetBuilderInit(50, 60)
 
-    elif args.stage == 'traj':
+    elif known_args.stage == 'traj':
+        PDTraj.add_model_specific_args(parser)
         args = parser.parse_args()
         model = PDTraj(args)
         

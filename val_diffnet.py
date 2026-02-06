@@ -59,13 +59,19 @@ if __name__ == '__main__':
     parser.add_argument('--cost_param_costl', type = float, default = 1.0)
     parser.add_argument('--cost_param_threl', type = float, default = 1.0)
     
+    parser.add_argument('--stage', type = str, default = 'init', choices = ['init', 'traj'])
+    
     
     args = parser.parse_args()
 
     model = {
-        'PDInit': PDInit,
-    }['PDInit'].load_from_checkpoint(checkpoint_path=args.ckpt_path, strict=False)
-    
+        'init': PDInit,
+        'traj': PDTraj,
+    }[args.stage].load_from_checkpoint(checkpoint_path=args.ckpt_path, strict=False)
+    target_builder={
+        'init': TargetBuilderInit,
+        'traj': TargetBuilderTraj,
+    }[args.stage]
     model.add_extra_param(args)
     
     
@@ -73,11 +79,10 @@ if __name__ == '__main__':
     model.sampling_stride = args.sampling_stride
     model.check_param()
     model.num_eval_samples = args.num_eval_samples
-    model.eval_mode_error_2 = args.eval_mode_error_2
     val_dataset = {
         'argoverse_v2': ArgoverseV2Dataset,
     }[model.dataset](root=args.root, split=args.network_mode,
-                     transform=TargetBuilder(model.init_timestep, model.num_generation_timestep))
+                     transform=target_builder(model.init_timestep, model.num_generation_timestep))
     dataloader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers,
                             pin_memory=args.pin_memory, persistent_workers=args.persistent_workers)
     

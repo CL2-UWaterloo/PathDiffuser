@@ -46,7 +46,7 @@ Below are the significant arguments related to our work:
 
 ### Validation Command
 ```sh
-python val_diffnet.py --root <Path to dataset> --ckpt_path <Path to diffusion network checkpoint> --devices '1' --batch_size 8 --sampling ddim --sampling_stride 10 --num_eval_samples 128 --network_mode 'val'
+python val_diffnet.py --root <Path to dataset> --ckpt_path <Path to diffusion network checkpoint> --devices '1' --batch_size 8 --sampling ddim --sampling_stride 10 --num_eval_samples 128 --network_mode 'val' --stage init
 ```
 
 ## Trajectory Generation
@@ -73,7 +73,7 @@ Below are the significant arguments related to our work:
 
 ### Validation Command
 ```sh
-python val_diffnet.py --root <Path to dataset> --ckpt_path <Path to diffusion network checkpoint> --devices '1' --batch_size 8 --sampling ddim --sampling_stride 10 --num_eval_samples 128 --path_pca_V_k 'pca/imp_org/V_k_10.npy' --network_mode 'val'
+python val_diffnet.py --root <Path to dataset> --ckpt_path <Path to diffusion network checkpoint> --devices '1' --batch_size 8 --sampling ddim --sampling_stride 10 --num_eval_samples 128 --path_pca_V_k 'pca/imp_org/V_k_10.npy' --network_mode 'val' --stage traj
 ```
 
 ## Citation
