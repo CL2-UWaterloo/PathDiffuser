@@ -50,10 +50,9 @@ python val_diffnet.py --root <Path to dataset> --ckpt_path <Path to diffusion ne
 ```
 
 ## Trajectory Generation
-
 ### Training Command
 ```sh
-python train_diffnet_tb.py --root  <Path to dataset> --train_batch_size 32 --val_batch_size 32 --test_batch_size 32 --dataset argoverse_v2 --init_timestep 50 --num_generation_timestep 60 --pl2pl_radius 150 --devices 1 --qcnet_map_ckpt_path  <Path to diffusion network checkpoint>  --num_workers 16 --num_denoiser_layers 3 --num_diffusion_steps 100 --max_epochs 30 --lr 0.005 --beta_1 0.0001 --beta_T 0.05 --diff_type vd --sampling ddpm --sampling_stride 10 --num_eval_samples 1 --check_val_every_n_epoch 1 --path_pca_s_mean pca/imp_org/s_mean_10.npy --path_pca_VT_k pca/imp_org/VT_k_10.npy --path_pca_V_k pca/imp_org/V_k_10.npy --path_pca_latent_mean pca/imp_org/latent_mean_10.npy --path_pca_latent_std pca/imp_org/latent_std_10.npy --stage traj
+python train_diffnet_tb.py --root  <Path to dataset> --train_batch_size 32 --val_batch_size 32 --test_batch_size 32 --dataset argoverse_v2 --init_timestep 50 --num_generation_timestep 60 --pl2pl_radius 150 --devices 1 --qcnet_map_ckpt_path  ckpts_qcnet/QCNet_AV2_mapencoder.ckpt  --num_workers 16 --num_denoiser_layers 3 --num_diffusion_steps 100 --max_epochs 30 --lr 0.005 --beta_1 0.0001 --beta_T 0.05 --diff_type vd --sampling ddpm --sampling_stride 10 --num_eval_samples 1 --check_val_every_n_epoch 1 --path_pca_s_mean pca/imp_org/s_mean_10.npy --path_pca_VT_k pca/imp_org/VT_k_10.npy --path_pca_V_k pca/imp_org/V_k_10.npy --path_pca_latent_mean pca/imp_org/latent_mean_10.npy --path_pca_latent_std pca/imp_org/latent_std_10.npy --stage traj
 ```
 Below are the significant arguments related to our work:
 

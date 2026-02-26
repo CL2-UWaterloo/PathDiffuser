@@ -66,16 +66,8 @@ class PDInit(pl.LightningModule):
         self.sampling_stride = args.sampling_stride
         self.num_diffusion_steps = args.num_diffusion_steps
         self.num_eval_samples = args.num_eval_samples
-        self.path_pca_s_mean = args.path_pca_s_mean
-        self.path_pca_VT_k = args.path_pca_VT_k
-        self.path_pca_latent_mean = args.path_pca_latent_mean
-        self.path_pca_latent_std = args.path_pca_latent_std
-        self.s_mean = None
-        self.VT_k = None
-        self.latent_mean = None
-        self.latent_std = None
-        self.m_dim = args.m_dim
         self.root = args.root
+        self.m_dim = args.m_dim
         
         self.check_param()
 
@@ -364,8 +356,6 @@ class PDInit(pl.LightningModule):
     
         gt = torch.cat([data['agent']['target'][..., :self.output_dim], data['agent']['target'][..., -1:]], dim=-1)
 
-        if self.s_mean == None:
-            self.load_vars(self.device)
         mask = data['agent']['mask']
         
         gt_n = gt[mask][..., :self.output_dim]
@@ -501,6 +491,7 @@ class PDInit(pl.LightningModule):
             mean_dist = self.dist_from_gt_all/self.cnt
             print(f'Gen: collision: {self.Collision.compute().item()}, nearest_edge:{self.NearestEdge.compute().item()}, offroad:{self.OffRoad.compute().item()}, dist: {mean_dist}')
         
+        self.log(f'val_offroad_rate', self.OffRoad, prog_bar=True, on_step=False, on_epoch=True, batch_size=len(data['scenario_id']),sync_dist=True)
         scenario_id = data['scenario_id'][0] 
 
         goal_point = gt_eval[:,-1,:2]
@@ -589,8 +580,6 @@ class PDInit(pl.LightningModule):
         scene_enc = self.qcnet_mapencoder(data)
         gt = torch.cat([data['agent']['target'][..., :self.output_dim], data['agent']['target'][..., -1:]], dim=-1)
         
-        if self.s_mean == None:
-            self.load_vars(gt.device)
             
 
         if self.dataset == 'argoverse_v2':
@@ -816,5 +805,6 @@ class PDInit(pl.LightningModule):
         parser.add_argument('--sampling_stride', type = int, default = 20)
         parser.add_argument('--num_eval_samples', type = int, default = 6)
         parser.add_argument('--train_agent', choices=['all', 'eval'],default = 'all')
+        parser.add_argument('--m_dim',type=int, default=5)
         
         return parent_parser
