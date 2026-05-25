@@ -77,15 +77,16 @@ python val_diffnet.py --root <Path to dataset> --ckpt_path <Path to diffusion ne
 
 ## Citation
 ```
-@misc{lee2025pathdiffuserdiffusionmodel,
-      title={Path Diffuser: Diffusion Model for Data-Driven Traffic Simulator}, 
-      author={Da Saem Lee and Akash Karthikeyan and Yash Vardhan Pant and Sebastian Fischmeister},
-      year={2025},
-      eprint={2509.24995},
-      archivePrefix={arXiv},
-      primaryClass={cs.RO},
-      url={https://arxiv.org/abs/2509.24995}, 
-}
+@INPROCEEDINGS{lee2025pathdiffuserdiffusionmodel,
+  author={Lee, Da Saem and Karthikeyan, Akash and Pant, Yash Vardhan and Fischmeister, Sebastian},
+  booktitle={2025 IEEE 28th International Conference on Intelligent Transportation Systems (ITSC)}, 
+  title={Path Diffuser: Diffusion Model for Data-Driven Traffic Simulator}, 
+  year={2025},
+  volume={},
+  number={},
+  pages={569-576},
+  keywords={Training;Measurement;Dimensionality reduction;Weather;Adaptation models;Roads;Perturbation methods;Diffusion models;Controllability;Trajectory},
+  doi={10.1109/ITSC60802.2025.11423013}}
 ```
 
 ## Acknowledgement
