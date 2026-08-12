@@ -1040,51 +1040,52 @@ class PDTraj(pl.LightningModule):
             {"params": [param_dict[param_name] for param_name in sorted(list(no_decay))],
              "weight_decay": 0.0},
         ]
-        # optim_groups_diff = [
-        #     {"params": [param_dict[param_name] for param_name in sorted(list(decay)) if 'map_encoder' not in param_name],
-        #      "weight_decay": self.weight_decay},
-        #     {"params": [param_dict[param_name] for param_name in sorted(list(no_decay)) if 'map_encoder' not in param_name],
-        #      "weight_decay": 0.0},
-        # ]
+        
+        optimizer = torch.optim.AdamW(optim_groups, weight_decay=self.weight_decay, lr=self.lr)
+        
+        max_steps = self.trainer.estimated_stepping_batches
+            
+        T_mult = 2
 
-        # optim_groups_qcnet_map = [
-        #     {"params": [param_dict[param_name] for param_name in sorted(list(decay)) if 'map_encoder' in param_name],
-        #      "weight_decay": self.weight_decay},
-        #     {"params": [param_dict[param_name] for param_name in sorted(list(no_decay)) if 'map_encoder' in param_name],
-        #      "weight_decay": 0.0},
-        # ]
+        T_0 = 100
+        num_cycles = max(
+            1,
+            math.floor(
+                math.log2(max_steps / T_0 + 1)
+            ),
+        )
 
-        # optimizer_diff = torch.optim.AdamW(optim_groups_diff, lr=self.lr, weight_decay=self.weight_decay)
-        # scheduler_diff = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer_diff, T_max=self.T_max, eta_min=0.0)
+        num_restart_cycles = max(1, num_cycles - 1)
 
-        optimizer = torch.optim.AdamW(optim_groups, weight_decay=self.weight_decay)
-        scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer=optimizer, max_lr=self.lr, steps_per_epoch=self.trainer.estimated_stepping_batches // self.trainer.max_epochs,  # Or len(train_dataloader) if you know it
-            epochs=self.trainer.max_epochs)
+        restart_steps = T_0 * (T_mult**num_restart_cycles - 1)
 
-        # scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer=optimizer, T_0=100, T_mult= 2, eta_min=1e-6)
-        # scheduler = CosineAnnealingWarmupRestarts(
-        #     optimizer,
-        #     first_cycle_steps=100,
-        #     cycle_mult=2.0,
-        #     max_lr=self.lr,
-        #     min_lr=1e-7,
-        #     warmup_steps=10,
-        #     gamma=0.9,
-        # )
+        final_steps = max_steps - restart_steps
 
+
+        warm_restart = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer=optimizer, T_0=T_0, T_mult=T_mult, eta_min=1e-7)
+
+        final_cosine = torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer,
+            T_max=final_steps,
+            eta_min=1e-7,
+        )
+
+        scheduler = torch.optim.lr_scheduler.SequentialLR(
+            optimizer,
+            schedulers=[
+                warm_restart,
+                final_cosine,
+            ],
+            milestones=[
+                restart_steps,
+            ],
+        )
         
         return [optimizer], [{
         'scheduler': scheduler,
-        'interval': 'step',  # or 'epoch', depending on when you want to step the scheduler
+        'interval': 'step',
         'frequency': 1
         }]
-    
-    # def set_opt_lr(self, lr):
-    #     [optimizer], [scheduler] = self.optimizers()
-    #     for g in optimizer.param_groups:
-    #         g['lr'] = 0.001
-    #     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer=optimizer, T_max=self.T_max, eta_min=0.0)
-        
 
 
     @staticmethod

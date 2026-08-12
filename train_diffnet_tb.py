@@ -96,18 +96,13 @@ if __name__ == '__main__':
     }[args.dataset](**vars(args))
     
         
-    BASE_LOG_DIR = "logs_init_final_diff_noangle"
+    BASE_LOG_DIR = f"logs_pd_{args.stage}"
     experiment_folder = BASE_LOG_DIR
     os.makedirs(experiment_folder, exist_ok=True)
-    # version_num = next_version(experiment_folder)
-    # version_folder = f"version_{version_num}"
-    # os.makedirs(os.path.join(experiment_folder, version_folder), exist_ok=True)
-    exp_name = f'exp_pd_init'
+    exp_name = f'exp_pd_{args.stage}'
     log_dir = os.path.join(experiment_folder, exp_name)
 
-    wandb_logger = WandbLogger(project='init_final_diff_noangle', log_model='all',  name=exp_name,
-                            save_dir=log_dir  # force exact same folder
-                            )
+    wandb_logger = WandbLogger(project='PD', log_model=True,  name=exp_name, save_dir=log_dir)
 
 
     lr_monitor = LearningRateMonitor(logging_interval='epoch')

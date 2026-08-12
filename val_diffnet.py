@@ -67,7 +67,7 @@ if __name__ == '__main__':
     model = {
         'init': PDInit,
         'traj': PDTraj,
-    }[args.stage].load_from_checkpoint(checkpoint_path=args.ckpt_path, strict=False)
+    }[args.stage].load_from_checkpoint(checkpoint_path=args.ckpt_path, strict=False, weights_only=False)
     target_builder={
         'init': TargetBuilderInit,
         'traj': TargetBuilderTraj,
